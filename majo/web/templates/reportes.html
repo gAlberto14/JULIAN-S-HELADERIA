@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% from "components/ui.html" import page_header, card, kpi, segmented, bars, empty %}
+{% block title %}Reportes · Majö{% endblock %}
+{% block content %}
+{{ page_header("Reportes y estadísticas", "Cómo va la heladería en el periodo elegido.") }}
+{{ segmented([(1,"Hoy"),(7,"7 días"),(30,"30 días"),(0,"Todo")], dias, "dias") }}
+{% if r.tickets %}
+<div class="kpis">{{ kpi("Ventas", r.income|money, "💵") }}{{ kpi("Tickets", r.tickets, "🧾") }}{{ kpi("Ticket promedio", r.avg|money, "📈") }}{{ kpi("Utilidad", r.profit|money, "🏦", "bad" if r.profit < 0 else "ok") }}</div>
+<div class="cols eq">{% call card("🏆 Más vendidos (unidades)") %}{{ bars(r.top) }}{% endcall %}{% call card("💳 Por forma de pago") %}{{ bars(r.by_pay) }}{% endcall %}</div>
+<div style="margin-top:var(--s4)">{% call card("📅 Ventas por día") %}{{ bars(r.by_day) }}{% endcall %}</div>
+{% else %}<div class="card">{{ empty("📊", "Sin ventas en este periodo", "Registra ventas o elige otro rango para ver estadísticas.", "/ventas", "Ir a ventas") }}</div>{% endif %}
+{% endblock %}

@@ -1,0 +1,50 @@
+{# Biblioteca de componentes. Uso: {% from "components/ui.html" import btn, card %} #}
+{% macro btn(label, href=None, kind="primary", size="md", icon="", type="submit", attrs="") -%}
+{%- set cls = "btn " ~ ("ghost" if kind == "ghost" else "danger" if kind == "danger" else "") ~ " " ~ size -%}
+{%- if href %}<a class="{{ cls }}" href="{{ href }}" {{ attrs|safe }}>{{ icon }} {{ label }}</a>
+{%- else %}<button class="{{ cls }}" type="{{ type }}" {{ attrs|safe }}>{{ icon }} {{ label }}</button>{% endif -%}
+{%- endmacro %}
+
+{% macro page_header(title, subtitle=None) %}
+<div class="page-h"><div><h1>{{ title }}</h1>{% if subtitle %}<p>{{ subtitle }}</p>{% endif %}</div>
+{% if caller %}<div class="act">{{ caller() }}</div>{% endif %}</div>
+{% endmacro %}
+
+{% macro card(title=None) %}<section class="card">{% if title %}<h2 style="font-size:var(--fs-l)">{{ title }}</h2>{% endif %}{{ caller() }}</section>{% endmacro %}
+
+{% macro kpi(label, value, icon="", tone="") %}
+<div class="card kpi {{ tone }}"><div class="ic" aria-hidden="true">{{ icon }}</div><div><small>{{ label }}</small><b>{{ value }}</b></div></div>
+{% endmacro %}
+
+{% macro badge(text, tone="") %}<span class="badge {{ tone }}">{{ text }}</span>{% endmacro %}
+
+{% macro empty(icon, title, text="", href=None, action="") %}
+<div class="empty"><div class="em" aria-hidden="true">{{ icon }}</div><h3>{{ title }}</h3><p>{{ text }}</p>{% if href %}{{ btn(action, href) }}{% endif %}</div>
+{% endmacro %}
+
+{% macro field(label, name, type="text", value="", help=None, required=False, attrs="") %}
+<label class="field"><span>{{ label }}{% if required %} *{% endif %}</span>
+<input name="{{ name }}" type="{{ type }}" value="{{ value }}" {{ "required" if required }} {{ attrs|safe }}>{% if help %}<small>{{ help }}</small>{% endif %}</label>
+{% endmacro %}
+
+{% macro switch(name, label, checked=True) %}
+<label class="switch"><input type="checkbox" name="{{ name }}" {{ "checked" if checked }}><span>{{ label }}</span></label>
+{% endmacro %}
+
+{% macro chips(options, target="") %}
+<div class="chips" role="group" aria-label="Filtrar por categoría" data-filter="{{ target }}">
+<button type="button" class="chip on" data-cat="">Todos</button>{% for o in options %}<button type="button" class="chip" data-cat="{{ o }}">{{ o|cat_icon }} {{ o }}</button>{% endfor %}</div>
+{% endmacro %}
+
+{% macro segmented(options, current, param) %}
+<div class="chips" role="group" aria-label="Periodo">{% for v, t in options %}<a class="chip {{ 'on' if v == current }}" href="?{{ param }}={{ v }}" {{ 'aria-current=true' if v == current }}>{{ t }}</a>{% endfor %}</div>
+{% endmacro %}
+
+{% macro bars(items) %}
+{% for b in items %}<div class="bar"><span title="{{ b.label }}">{{ b.label }}</span><div class="track"><div class="fill" style="width:{{ b.pct }}%"></div></div><b>{{ b.value|money if b.money else b.value }}</b></div>
+{% else %}<p class="note">Sin datos en este periodo.</p>{% endfor %}
+{% endmacro %}
+
+{% macro confirm_form(action, label, message, kind="danger") %}
+<form method="post" action="{{ action }}" data-confirm="{{ message }}" style="display:inline">{{ btn(label, kind=kind, size="sm") }}</form>
+{% endmacro %}

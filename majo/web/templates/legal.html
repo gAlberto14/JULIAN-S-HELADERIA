@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% from "components/ui.html" import card, page_header %}
+{% block content %}{% if kind == "terminos" %}{{ page_header("Términos y condiciones") }}{% else %}{{ page_header("Política de cookies") }}{% endif %}
+{% call card() %}<p class="note">Texto base: debe ser revisado por un abogado antes de publicarse.</p>
+{% if kind == "terminos" %}
+<p>1. Este sitio informa sobre los productos de Majö Helado Yogurt. No se reciben pedidos ni domicilios por este medio.</p>
+<p>2. Los precios y productos pueden cambiar sin previo aviso y se confirman en el establecimiento.</p>
+<p>3. El área interna es solo para personal autorizado, que debe cuidar sus credenciales.</p>
+<p>4. Los datos personales se tratan conforme a la Ley 1581 de 2012 de Colombia.</p>
+{% else %}
+<p>Usamos cookies y almacenamiento del navegador únicamente para mantener tu sesión en el área interna, recordar el modo de color y recordar que viste el aviso.</p>
+<p>No usamos cookies de publicidad ni de seguimiento. Puedes borrarlas desde la configuración de tu navegador.</p>{% endif %}{% endcall %}{% endblock %}

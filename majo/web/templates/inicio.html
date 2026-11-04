@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% from "components/ui.html" import btn, card %}
+{% block content %}
+<section class="hero"><h1>Descubre tu lado más natural</h1>
+<p>Helado de yogurt con fruta fresca, toppings y conos para compartir en familia.</p>
+{{ btn("Ver productos", "/productos", icon="🍦") }}
+{{ btn("Cómo llegar", "https://www.google.com/maps/search/?api=1&query=Diagonal+66+26-10+Ciudad+2000+Cali", kind="ghost", icon="📍", attrs='target="_blank" rel="noopener"') }}
+<span class="big" aria-hidden="true">🍦</span></section>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+{% call card("🥛 Yogurt natural") %}<p class="note">Suave y cremoso. Combínalo con tus frutas favoritas.</p>{% endcall %}
+{% call card("🥝 Frutas y toppings") %}<p class="note">Kiwi, cerezas, maracuyá y más para armar tu helado.</p>{% endcall %}
+{% call card("🍨 Maxi cono") %}<p class="note">Cono grande con pasta de fruta, ideal para compartir.</p>{% endcall %}</div>
+<p class="note" style="margin-top:var(--s4)">ℹ️ Esta página es informativa: por ahora no recibimos pedidos a domicilio.</p>
+{% endblock %}

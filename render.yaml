@@ -1,0 +1,23 @@
+# Blueprint de Render: https://render.com/docs/blueprint-spec
+# Conecta el repositorio en Render > New > Blueprint y Render detecta este archivo.
+services:
+  - type: web
+    name: majo-app
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: 'uvicorn majo.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips="*"'
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      # Cópialas desde Supabase > Project Settings > API.
+      # sync: false hace que Render las pida al crear el servicio y no las guarda en Git.
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false

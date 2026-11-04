@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% from "components/ui.html" import btn, field %}
+{% block title %}Ingresar · Majö{% endblock %}
+{% block content %}<div class="card" style="max-width:420px;margin:var(--s5) auto"><h1 style="font-size:var(--fs-xl);margin-bottom:var(--s4)">Ingresar</h1>
+<form method="post" action="/login">
+{{ field("Correo", "email", "email", required=True, attrs='autocomplete="username" autofocus') }}
+{{ field("Contraseña", "password", "password", required=True, attrs='autocomplete="current-password"') }}
+{{ btn("Ingresar", size="lg") }}</form>
+{% if demo %}<details style="margin-top:var(--s4)"><summary class="note">Modo demo: ver usuarios de prueba</summary>
+<p class="note">admin@majo.co / admin123<br>mesero@majo.co / mesero123</p></details>{% endif %}</div>{% endblock %}

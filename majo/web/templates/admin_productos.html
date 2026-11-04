@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% from "components/ui.html" import page_header, card, btn, field, switch, badge, empty, confirm_form %}
+{% block title %}Catálogo · Majö{% endblock %}
+{% block content %}
+{{ page_header("Catálogo de productos", "Agrega, edita u oculta lo que se muestra y se vende.") }}
+<div class="cols"><div class="stack">
+{% for p in products %}<div class="card" style="display:flex;gap:var(--s3);align-items:center;flex-wrap:wrap">
+<div class="kpi"><div class="ic" aria-hidden="true">{{ p.cat|cat_icon }}</div><div><b style="font-size:1rem">{{ p.name }}</b><small>{{ p.price|money }} · {{ p.cat }}</small></div></div>
+<div style="margin-left:auto;display:flex;gap:var(--s2);align-items:center;flex-wrap:wrap">{{ badge("Visible", "ok") if p.active else badge("Oculto") }}
+<form method="post" action="/admin/productos/{{ p.id }}/estado">{{ btn("Ocultar" if p.active else "Mostrar", kind="ghost", size="sm") }}</form>
+{{ btn("Editar", "/admin/productos?editar=" ~ p.id, kind="ghost", size="sm") }}
+{{ confirm_form("/admin/productos/" ~ p.id ~ "/borrar", "Borrar", "Se borrará «" ~ p.name ~ "». Las ventas ya registradas no cambian.") }}</div></div>
+{% else %}<div class="card">{{ empty("🍨", "Todavía no hay productos", "Crea el primero con el formulario.") }}</div>{% endfor %}</div>
+<form method="post" action="/admin/productos" class="card sticky" id="form"><h2 style="font-size:var(--fs-l);margin-bottom:var(--s3)">{{ "Editar producto" if editing else "Nuevo producto" }}</h2>
+<input type="hidden" name="id" value="{{ editing.id if editing else '' }}">
+{{ field("Nombre", "name", value=editing.name if editing else "", required=True) }}
+{{ field("Categoría", "cat", value=editing.cat if editing else "", help="Ej.: Helados, Conos, Copas, Extras", attrs='list="cats"') }}
+<datalist id="cats">{% for c in products|map(attribute='cat')|unique %}<option value="{{ c }}">{% endfor %}</datalist>
+{{ field("Precio (COP)", "price", "number", editing.price|int if editing else "", required=True, attrs='min="0" step="any" inputmode="numeric"') }}
+<div style="margin-bottom:var(--s4)">{{ switch("active", "Visible y disponible para la venta", (editing.active if editing else True)) }}</div>
+{{ btn("Guardar cambios" if editing else "Agregar producto", size="lg") }}
+{% if editing %}<div style="margin-top:var(--s2)">{{ btn("Cancelar", "/admin/productos", kind="ghost", size="sm") }}</div>{% endif %}</form></div>
+{% endblock %}

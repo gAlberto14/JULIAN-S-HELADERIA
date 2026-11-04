@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% from "components/ui.html" import page_header, chips, kpi, empty, badge %}
+{% block title %}Ventas · Majö{% endblock %}
+{% block content %}
+{{ page_header("Registrar venta", "Toca + para agregar productos al pedido.") }}
+{% if products %}
+<form id="pos" method="post" action="/ventas" data-t="0"><div class="cols">
+<div>{{ chips(products|map(attribute='cat')|unique|list) }}
+<div class="grid">{% for p in products %}
+<article class="tile" data-price="{{ p.price|int }}" data-label="{{ p.name }}" data-cat-item="{{ p.cat }}">
+<div class="em" aria-hidden="true">{{ p.cat|cat_icon }}</div><h3>{{ p.name }}</h3><span class="price">{{ p.price|money }}</span>
+<input type="hidden" name="qty_{{ p.id }}" value="0">
+<div class="stepper"><button type="button" data-d="-" aria-label="Quitar uno de {{ p.name }}">−</button><output aria-live="polite">0</output><button type="button" class="plus" data-d="+" aria-label="Agregar uno de {{ p.name }}">+</button></div></article>{% endfor %}</div></div>
+<aside id="pedido" class="card sticky" aria-label="Resumen del pedido"><h2 style="font-size:var(--fs-l)">🧾 Pedido</h2>
+<div id="summary"></div><div class="total"><span>Total</span><b id="total">$0</b></div>
+<div class="chips wrap" role="radiogroup" aria-label="Forma de pago">{% for m in methods %}<label class="chip"><input type="radio" name="pay" value="{{ m }}" {{ "checked" if loop.first }}>{{ m }}</label>{% endfor %}</div>
+<div id="cash"><label class="field"><span>Recibido en efectivo (opcional)</span><input id="recv" type="number" min="0" inputmode="numeric"></label><p class="note">Cambio a devolver: <b id="change">—</b></p></div>
+<button class="btn lg" id="sellBtn" disabled>✔ Registrar venta</button>
+<button type="button" class="btn ghost sm" id="clear" style="margin-top:var(--s2);width:100%">Vaciar pedido</button></aside></div>
+<div class="cartbar"><div style="display:flex;justify-content:space-between;align-items:center"><span>Total <b id="barTotal">$0</b></span><a class="btn sm" href="#pedido">Ver pedido</a></div></div></form>
+{% else %}{{ empty("🍨", "No hay productos activos", "Pide al administrador que active productos en el catálogo.") }}{% endif %}
+<h2 style="font-size:var(--fs-l);margin:var(--s6) 0 var(--s3)">Ventas de hoy</h2>
+{% if today %}<div class="kpis">{{ kpi("Vendido hoy", today|sum(attribute='total')|money, "💵") }}{{ kpi("Tickets", today|length, "🧾") }}</div>
+<div class="card tbl"><table><tr><th>Hora</th><th>Detalle</th><th>Pago</th><th>Atendió</th><th class="num">Total</th></tr>
+{% for s in today %}<tr><td>{{ s.sale_time }}</td><td>{% for i in s.items %}{{ i.qty }}× {{ i.name }}{{ ", " if not loop.last }}{% endfor %}</td><td>{{ badge(s.pay) }}</td><td>{{ s.by_name }}</td><td class="num"><b>{{ s.total|money }}</b></td></tr>{% endfor %}</table></div>
+{% else %}<div class="card">{{ empty("🧾", "Aún no hay ventas hoy", "Cuando registres la primera, aparecerá aquí.") }}</div>{% endif %}
+{% endblock %}

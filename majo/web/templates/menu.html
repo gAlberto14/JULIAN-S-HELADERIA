@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% from "components/ui.html" import page_header, chips, empty %}
+{% block title %}Productos · Majö{% endblock %}
+{% block content %}
+{{ page_header("Nuestros productos", "Precios en pesos colombianos (COP).") }}
+{% if cats %}
+{{ chips(cats.keys()|list) }}
+<label class="field"><span class="sr">Buscar producto</span><input id="search" type="search" placeholder="🔍 Buscar producto"></label>
+<div class="grid">{% for cat, items in cats.items() %}{% for p in items %}
+<article class="tile" data-cat-item="{{ cat }}" data-name="{{ p.name|lower }}"><div class="em" aria-hidden="true">{{ cat|cat_icon }}</div>
+<h3>{{ p.name }}</h3><span class="price">{{ p.price|money }}</span><span class="badge" style="align-self:flex-start">{{ cat }}</span></article>{% endfor %}{% endfor %}</div>
+{% else %}{{ empty("🍨", "Aún no hay productos", "Vuelve pronto: estamos preparando el menú.") }}{% endif %}
+{% endblock %}

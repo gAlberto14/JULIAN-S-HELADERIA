@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% from "components/ui.html" import page_header, kpi, field, btn, badge, empty, confirm_form %}
+{% block title %}Contabilidad · Majö{% endblock %}
+{% block content %}
+{{ page_header("Contabilidad", "Ingresos por ventas, gastos y balance.") }}
+<div class="kpis">{{ kpi("Ingresos", ledger.income|money, "⬆️", "ok") }}{{ kpi("Gastos", ledger.expenses|money, "⬇️", "bad") }}{{ kpi("Balance", ledger.balance|money, "⚖️", "bad" if ledger.balance < 0 else "ok") }}</div>
+<div class="cols"><div class="card tbl"><h2 style="font-size:var(--fs-l);margin-bottom:var(--s3)">Movimientos</h2>
+{% if ledger.rows %}<table><tr><th>Fecha</th><th>Concepto</th><th>Tipo</th><th class="num">Valor</th><th></th></tr>
+{% for d, c, v, id in ledger.rows %}<tr><td>{{ d }}</td><td>{{ c }}</td><td>{{ badge("Gasto", "bad") if v < 0 else badge("Ingreso", "ok") }}</td><td class="num {{ 'neg' if v < 0 else 'pos' }}"><b>{{ v|money }}</b></td>
+<td>{% if id %}{{ confirm_form("/conta/gasto/" ~ id ~ "/borrar", "Borrar", "¿Borrar el gasto «" ~ c ~ "»?") }}{% endif %}</td></tr>{% endfor %}</table>
+{% else %}{{ empty("💰", "Sin movimientos", "Las ventas y los gastos aparecerán aquí.") }}{% endif %}</div>
+<form method="post" action="/conta/gasto" class="card sticky"><h2 style="font-size:var(--fs-l);margin-bottom:var(--s3)">Registrar gasto</h2>
+{{ field("Fecha", "when", "date", today, required=True) }}
+{{ field("Concepto", "concept", required=True, attrs='placeholder="Leche, arriendo, nómina..."') }}
+{{ field("Valor (COP)", "amount", "number", required=True, attrs='min="1" step="any" inputmode="numeric"') }}
+{{ btn("Guardar gasto", size="lg") }}</form></div>
+{% endblock %}
